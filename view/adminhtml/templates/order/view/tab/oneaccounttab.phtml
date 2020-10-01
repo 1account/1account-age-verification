@@ -1,0 +1,38 @@
+<?php
+/**
+ * @var $block \OneAccount\OneAccountAgeVerification\Block\Adminhtml\Order\View\Tab\OneAccountTab
+ */
+?>
+
+<div class="fieldset-wrapper order-information" id="order_av_block">
+    <div>
+        <h2>1Account User Age Validation Status</h2>
+    </div>
+
+    <table class="admin__table-secondary">
+        <tbody>
+            <tr>
+                <th><?php /* @escapeNotVerified */
+                    echo __('AV Status:') ?></th>
+                <td>
+                    <select name="av_status" id="av_status" class="admin__control-select">
+                        <?php foreach ($block->getAvStatuses() as $label => $value): ?>
+                            <option value="<?= $value ?>"
+                                <?php if ($value == $block->getOrder()->getData('order_av')): ?> selected="selected"
+                                <?php endif; ?>>
+                                <?= $label ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    <div>
+                        <?= $block->getChildHtml('submit_button') ?>
+                    </div>
+                </th>
+            </tr>
+        </tbody>
+    </table>
+</div>
