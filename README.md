@@ -103,3 +103,7 @@ Go to
 ### Frontend
 
 When you place an order before creating an order you will see 1Account modal. If you pass 1Account validation - order will continue.
+
+## Remove module
+
+    composer remove 1account/1account-age-verification

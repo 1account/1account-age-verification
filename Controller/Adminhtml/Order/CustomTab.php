@@ -3,7 +3,6 @@
 namespace OneAccount\OneAccountAgeVerification\Controller\Adminhtml\Order;
 
 use Magento\Sales\Api\Data\OrderInterfaceFactory;
-use Magento\Framework\Message\ManagerInterface as MessageManagerInterface;
 use Magento\Framework\Controller\Result\RedirectFactory;
 use Magento\Backend\App\Action\Context;
 use Magento\Sales\Api\OrderManagementInterface;
@@ -27,11 +26,6 @@ class CustomTab extends Order
     protected $orderInterfaceFactory;
 
     /**
-     * @var MessageManagerInterface
-     */
-    protected $messageManager;
-
-    /**
      * @var RedirectFactory
      */
     protected $redirectFactory;
@@ -49,7 +43,6 @@ class CustomTab extends Order
      * @param OrderRepositoryInterface $orderRepository
      * @param LoggerInterface $logger
      * @param OrderInterfaceFactory $orderInterfaceFactory
-     * @param MessageManagerInterface $messageManager
      * @param RedirectFactory $redirectFactory
      */
     public function __construct(
@@ -65,11 +58,9 @@ class CustomTab extends Order
         OrderRepositoryInterface $orderRepository,
         LoggerInterface $logger,
         OrderInterfaceFactory $orderInterfaceFactory,
-        MessageManagerInterface $messageManager,
         RedirectFactory $redirectFactory
     ) {
         $this->orderInterfaceFactory = $orderInterfaceFactory;
-        $this->messageManager = $messageManager;
         $this->redirectFactory = $redirectFactory;
         parent::__construct(
             $context,
