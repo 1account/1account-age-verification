@@ -21,7 +21,7 @@ class ConfigObserver implements ObserverInterface
     const CLIENT_AVLEVEL_PATH_URL = 'oneaccount/general/avLevel';
     const MODULE_ENABLE_PATH_URL = 'oneaccount/general/enable';
 
-    const ONEACCOUNT_VALIDATION_URL = 'https://stage-api.1account.net/oauth/publisher/client-auth';
+    const ONEACCOUNT_VALIDATION_URL = 'https://api.1account.net/oauth/publisher/client-auth';
 
     /**
      * @var Logger

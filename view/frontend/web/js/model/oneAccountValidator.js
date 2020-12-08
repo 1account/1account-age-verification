@@ -24,7 +24,7 @@ define(
         var avLevel = window.checkoutConfig.oneaccount.avLevel;
         var clientId = window.checkoutConfig.oneaccount.clientId;
         var moduleEnable = window.checkoutConfig.oneaccount.moduleEnable;
-
+        var clientSessionAvChecked = false;
         var isValid;
 
         function getIsValidState()
@@ -40,13 +40,13 @@ define(
 
         const oneAccountValidate = () => {
             if ( client_logged_in === true ) {
-                if (client_av_status !== 'success') {
+                if (clientSessionAvChecked === false && client_av_status !== 'success') {
                     showModal();
                 } else {
                     $(".payment-method-content button").trigger("click")
                 }
             } else {
-                if (getIsValidState() === null || getIsValidState() === 'false') {
+                if (getIsValidState() === null) {
                     showModal();
                 } else {
                     $(".payment-method-content button").trigger("click")
@@ -60,7 +60,7 @@ define(
                 clientId: clientId,
                 onComplete: (response) => {
                     if (response.status === "AV_SUCCESS") {
-                        messageList.addSuccessMessage({ message: $t('One Account validation passed! You can continue place order') });
+                        alert('Thank you. You have successfully verified your age.');
                         if ( client_logged_in === true ) {
                             $.ajax({
                                 url: "order/statusupdate",
@@ -76,7 +76,7 @@ define(
                             setIsValidState('true');
                         }
                     } else {
-                        messageList.addErrorMessage({ message: $t('One Account validation failed') });
+                        alert('We are sorry we have been unable to verify your age based on the details you have submitted.');
                         if ( client_logged_in === true ) {
                             $.ajax({
                                 url: "order/statusupdate",
@@ -92,6 +92,7 @@ define(
                             setIsValidState('false');
                         }
                     }
+                    clientSessionAvChecked = true;
                     oneAccountValidate();
                 }
             });
@@ -109,7 +110,7 @@ define(
                 country: shippingAddress.countryId,
                 city: shippingAddress.city,
                 street: shippingAddress.street[0],
-                building: shippingAddress.home,
+                building: shippingAddress.street[1],
                 postCode: shippingAddress.postcode
             });
 
@@ -120,14 +121,17 @@ define(
             validate: function () {
                 if (moduleEnable === '1') {
                     if (client_logged_in === true) {
-                        if (client_av_status !== 'success') {
+                        if (clientSessionAvChecked === false && client_av_status !== 'success') {
                             oneAccountValidate();
                         } else {
                             return true;
                         }
                     } else {
-                        if (getIsValidState() === null || getIsValidState() === "false") {
+                        if (getIsValidState() === null) {
                             oneAccountValidate();
+                        } else if (getIsValidState() === 'false') {
+                            $.cookie("isValid", null);
+                            return true;
                         } else {
                             return true;
                         }
