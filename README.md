@@ -26,7 +26,7 @@
 #### 1.2 Download extension
   
 ```
-composer require 1account/1account-age-verification:dev-master
+composer require 1account/1account-age-verification
 ```
 
 ### Step 2: Enable extension
