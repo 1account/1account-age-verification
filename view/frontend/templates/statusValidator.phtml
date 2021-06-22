@@ -1,0 +1,88 @@
+<?php
+/**
+ * @var $block \OneAccount\OneAccountAgeVerification\Block\StatusValidate
+ */
+    $info = $block->getOrderData();
+    $successUrl = $block->getBaseUrl() . 'status/validate/result?status=valid';
+    $failUrl = $block->getBaseUrl() . 'status/validate/result?status=invalid';
+?>
+<script>
+    require([
+        "jquery",
+        "mage/mage"
+    ], function($){
+        var authCode = '<?php echo $block->getAuthCode() ?>';
+        var avLevel = '<?php echo $block->getAvLevel() ?>';
+        var clientId = '<?php echo $block->getClientId() ?>';
+        var moduleEnable = Boolean(<?php echo $block->getModuleEnable() ?>);
+        var client_logged_in = Boolean(<?php echo $block->checkCustomerExist() ?>);
+        var customerId = '<?php echo $block->getCustometId() ?>';
+
+
+
+        PUSH_API.init({
+            authCode: authCode,
+            avLevel: avLevel,
+            clientId: clientId,
+            onComplete: (response) => {
+                if (response.status === "AV_SUCCESS") {
+                    if (moduleEnable === true) {
+                        if (client_logged_in === true) {
+                            $.ajax({
+                                url: "order/statusupdate",
+                                data: {
+                                    'id': customerId,
+                                    'status': 'success'
+                                },
+                                type: "GET",
+                                dataType: 'json',
+                            });
+                        } else {
+                            $.cookie("isValid", 'true');
+                        }
+
+                        $.ajax({
+                            url: "order/validationupdate",
+                            data: {
+                                'id': <?php echo $info['orderId'] ?>,
+                                'status': 'valid'
+                            },
+                            type: "GET",
+                            dataType: 'json',
+                        });
+
+                        $.ajax({
+                            url: 'validate/notificationvalidation',
+                            data: {
+                                'id': <?php echo $info['orderId'] ?>
+                            },
+                            type: "POST",
+                            dataType: 'json',
+                        });
+
+                        $($.mage.redirect("<?php echo $successUrl ?>", "assign", 10));
+                    }
+                } else {
+                    $($.mage.redirect("<?php echo $failUrl ?>", "assign", 10));
+                }
+            }
+        });
+    });
+</script>
+<script>
+    window.addEventListener("load", function() {
+        PUSH_API.validate({
+            msisdn: '<?php echo $info['msisdn'] ?>',
+            email: '<?php echo $info['email'] ?>',
+            forename: '<?php echo $info['forename'] ?>',
+            surname: '<?php echo $info['surname'] ?>',
+            country: '<?php echo $info['country'] ?>',
+            city: '<?php echo $info['city'] ?>',
+            street: '<?php echo $info['street'] ?>',
+            building: '<?php echo $info['building'] ?>',
+            postCode: '<?php echo $info['postCode'] ?>'
+        });
+
+        e.preventDefault();
+    });
+</script>

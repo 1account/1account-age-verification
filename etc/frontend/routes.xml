@@ -4,5 +4,8 @@
         <route id="checkout">
             <module name="OneAccount_OneAccountAgeVerification" />
         </route>
+        <route id="status" frontName="status">
+            <module name="OneAccount_OneAccountAgeVerification" />
+        </route>
     </router>
 </config>

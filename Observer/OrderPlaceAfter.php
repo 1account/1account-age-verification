@@ -5,19 +5,13 @@ namespace OneAccount\OneAccountAgeVerification\Observer;
 use Magento\Sales\Model\Order;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer as EventObserver;
-use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
-use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\Stdlib\CookieManagerInterface;
+use Magento\Store\Model\StoreManagerInterface;
 
 class OrderPlaceAfter implements ObserverInterface
 {
-    /**
-     * @var CustomerRepositoryInterface
-     */
-    private $customerRepositoryInterface;
+    const ONEACCOUNT_ORDER_DATA_STORE_URL = 'https://stage-api.1account.net/platforms/woomagento/incompleteAV/create';
 
     /**
      * @var ScopeConfigInterface
@@ -30,56 +24,60 @@ class OrderPlaceAfter implements ObserverInterface
     private $orderRepositoryInterface;
 
     /**
-     * @var CookieManagerInterface
+     * @var StoreManagerInterface
      */
-    private $cookieManager;
+    private $storeManager;
 
     /**
-     * OrderPlaceAfter constructor.
-     * @param CustomerRepositoryInterface $customerRepositoryInterface
+     * OrderPlaceBefore constructor.
      * @param ScopeConfigInterface $scopeConfig
      * @param OrderRepositoryInterface $orderRepositoryInterface
-     * @param CookieManagerInterface $cookieManager
+     * @param StoreManagerInterface $storeManager
      */
     public function __construct(
-        CustomerRepositoryInterface $customerRepositoryInterface,
         ScopeConfigInterface $scopeConfig,
         OrderRepositoryInterface $orderRepositoryInterface,
-        CookieManagerInterface $cookieManager
+        StoreManagerInterface $storeManager
     ) {
-        $this->customerRepositoryInterface = $customerRepositoryInterface;
         $this->scopeConfig = $scopeConfig;
         $this->orderRepositoryInterface = $orderRepositoryInterface;
-        $this->cookieManager = $cookieManager;
+        $this->storeManager = $storeManager;
     }
 
     /**
      * @param EventObserver $observer
-     * @throws LocalizedException
-     * @throws NoSuchEntityException
      */
     public function execute(EventObserver $observer)
     {
         /** @var Order $order */
         $order = $observer->getData('order');
         if ($this->scopeConfig->getValue(ConfigObserver::MODULE_ENABLE_PATH_URL) === '1') {
-            if ($order->getCustomerIsGuest() === 0) {
-                $customer = $this->customerRepositoryInterface->get($order->getCustomerEmail());
-                if ($customer->getCustomAttribute('av_status')->getValue() === 'success') {
-                    $order->setData('order_av', 'valid');
-                    $this->orderRepositoryInterface->save($order);
-                } else {
-                    $order->setData('order_av', 'invalid');
-                    $this->orderRepositoryInterface->save($order);
+            if ($order->getData('order_av') === 'not_validate') {
+                $validateData = curl_init(self::ONEACCOUNT_ORDER_DATA_STORE_URL);
+                $items = [];
+                foreach ($order->getItems() as $item) {
+                    $items[] = [
+                        'itemName' => $item->getName(),
+                        'itemDescription' => $item->getDescription()
+                    ];
                 }
-            } else {
-                if ($this->cookieManager->getCookie('isValid') === 'true') {
-                    $order->setData('order_av', 'valid');
-                    $this->orderRepositoryInterface->save($order);
-                } else {
-                    $order->setData('order_av', 'invalid');
-                    $this->orderRepositoryInterface->save($order);
-                }
+                $orderData = [
+                    'orderId' => $order->getId(),
+                    'platformId' => 'MAGENTO',
+                    'userEmail' => $order->getCustomerEmail(),
+                    'userPhone' => $order->getShippingAddress() ? $order->getShippingAddress()->getTelephone() : '',
+                    'items' => $items,
+                    'avUrl' => $order->getStore()->getBaseUrl() . 'status/validate?key=' . base64_encode($order->getId()),
+                    'storeUrl' => $order->getStore()->getBaseUrl(),
+                    'customerName' => $order->getCustomerFirstname() . ' ' . $order->getCustomerLastname()
+                ];
+
+                curl_setopt($validateData, CURLOPT_CUSTOMREQUEST, "POST");
+                curl_setopt($validateData, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($validateData, CURLOPT_POSTFIELDS, json_encode($orderData));
+                curl_setopt($validateData, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
+
+                $response = json_decode(curl_exec($validateData), true);
             }
         }
     }

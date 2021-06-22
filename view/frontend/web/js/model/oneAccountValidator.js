@@ -38,21 +38,22 @@ define(
             return $.cookie("isValid", valid);
         }
 
-        const oneAccountValidate = () => {
-            if ( client_logged_in === true ) {
-                if (clientSessionAvChecked === false && client_av_status !== 'success') {
-                    showModal();
-                } else {
-                    $(".payment-method-content button").trigger("click")
-                }
-            } else {
-                if (getIsValidState() === null) {
-                    showModal();
-                } else {
-                    $(".payment-method-content button").trigger("click")
-                }
-            }
-        }
+        // const oneAccountValidate = () => {
+        //     if ( client_logged_in === true ) {
+        //         if (clientSessionAvChecked === false && client_av_status !== 'success') {
+        //             showModal();
+        //         } else {
+        //             $(".payment-method-content button").trigger("click")
+        //         }
+        //     } else {
+        //         if (getIsValidState() === null) {
+        //             showModal();
+        //         } else {
+        //             $(".payment-method-content button").trigger("click")
+        //         }
+        //     }
+        // }
+
         if ((client_logged_in === true && (client_av_status !== 'success')) || client_logged_in === false ) {
             PUSH_API.init({
                 authCode: authCode,
@@ -75,7 +76,7 @@ define(
                         } else {
                             setIsValidState('true');
                         }
-                    } else {
+                    } else if (response.status === "AV_FAILED") {
                         alert('We are sorry we have been unable to verify your age based on the details you have submitted.');
                         if ( client_logged_in === true ) {
                             $.ajax({
@@ -93,7 +94,11 @@ define(
                         }
                     }
                     clientSessionAvChecked = true;
-                    oneAccountValidate();
+                    $(".payment-method-content button").trigger("click")
+                },
+                onClose: () => {
+                    clientSessionAvChecked = true;
+                    $(".payment-method-content button").trigger("click")
                 }
             });
         }
@@ -122,13 +127,13 @@ define(
                 if (moduleEnable === '1') {
                     if (client_logged_in === true) {
                         if (clientSessionAvChecked === false && client_av_status !== 'success') {
-                            oneAccountValidate();
+                            showModal();
                         } else {
                             return true;
                         }
                     } else {
-                        if (getIsValidState() === null) {
-                            oneAccountValidate();
+                        if (clientSessionAvChecked === false && getIsValidState() === null) {
+                            showModal();
                         } else if (getIsValidState() === 'false') {
                             $.cookie("isValid", null);
                             return true;
