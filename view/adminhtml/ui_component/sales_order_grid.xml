@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
-    <columns name="sales_order_columns" class="OneAccount\OneAccountAgeVerification\Ui\Component\Listing\Column\AvValidation">
-        <column name="order_av">
+    <columns name="sales_order_columns">
+        <column name="order_av" class="OneAccount\OneAccountAgeVerification\Ui\Component\Listing\Column\AvValidation">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="component" xsi:type="string">OneAccount_OneAccountAgeVerification/js/grid/columns/avValid</item>
