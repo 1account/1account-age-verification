@@ -11,7 +11,7 @@ use Magento\Store\Model\StoreManagerInterface;
 
 class OrderPlaceAfter implements ObserverInterface
 {
-    const ONEACCOUNT_ORDER_DATA_STORE_URL = 'https://stage-api.1account.net/platforms/woomagento/incompleteAV/create';
+    const ONEACCOUNT_ORDER_DATA_STORE_URL = 'https://api.1account.net/platforms/woomagento/incompleteAV/create';
 
     /**
      * @var ScopeConfigInterface

@@ -10,7 +10,7 @@ use Magento\Framework\Exception\NoSuchEntityException;
 
 class NotificationValidation extends Action
 {
-    const ONEACCOUNT_ORDER_DATA_UPDATE_URL = 'https://stage-api.1account.net/platforms/woomagento/incompleteAV/update';
+    const ONEACCOUNT_ORDER_DATA_UPDATE_URL = 'https://api.1account.net/platforms/woomagento/incompleteAV/update';
 
     public function execute()
     {
