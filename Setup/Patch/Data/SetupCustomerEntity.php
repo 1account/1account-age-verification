@@ -1,6 +1,6 @@
 <?php
 
-namespace OneAccount\OneAccountAgeVerification\Setup;
+namespace OneAccount\OneAccountAgeVerification\Setup\Patch\Data;
 
 use Magento\Eav\Setup\EavSetupFactory;
 use Magento\Customer\Model\Customer;
@@ -9,6 +9,7 @@ use Magento\Eav\Model\Entity\Attribute\SetFactory as AttributeSetFactory;
 use Magento\Framework\Setup\InstallDataInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
+use Magento\Framework\Setup\Patch\DataPatchInterface;
 use Magento\Catalog\Setup\CategorySetupFactory;
 use Magento\Quote\Setup\QuoteSetupFactory;
 use Magento\Sales\Setup\SalesSetupFactory;
@@ -16,8 +17,13 @@ use Magento\Sales\Setup\SalesSetupFactory;
 /**
  * @package Vendor\Module\Setup\Patch\Data
  */
-class InstallData implements InstallDataInterface
+class SetupCustomerEntity implements DataPatchInterface
 {
+    /**
+     * @var ModuleDataSetupInterface
+     */
+    private $moduleDataSetup;
+
     /**
      * @var CustomerSetupFactory
      */
@@ -61,13 +67,16 @@ class InstallData implements InstallDataInterface
      * @param CustomerSetupFactory $customerSetupFactory
      * @param AttributeSetFactory $attributeSetFactory
      * @param SalesSetupFactory $salesSetupFactory
+     * @param ModuleDataSetupInterface $moduleDataSetup
      */
     public function __construct(
+        ModuleDataSetupInterface $moduleDataSetup,
         EavSetupFactory $eavSetupFactory,
         CustomerSetupFactory $customerSetupFactory,
         AttributeSetFactory $attributeSetFactory,
         SalesSetupFactory $salesSetupFactory
     ) {
+        $this->moduleDataSetup = $moduleDataSetup;
         $this->eavSetupFactory = $eavSetupFactory;
         $this->customerSetupFactory = $customerSetupFactory;
         $this->attributeSetFactory = $attributeSetFactory;
@@ -80,8 +89,11 @@ class InstallData implements InstallDataInterface
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
-    public function install(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
+    public function apply()
     {
+        $this->moduleDataSetup->startSetup();
+        $setup = $this->moduleDataSetup;
+
         $customerSetup = $this->customerSetupFactory->create(['setup' => $setup]);
         $customerEntity = $customerSetup->getEavConfig()->getEntityType('customer');
         $attributeSetId = $customerEntity->getDefaultAttributeSetId();
@@ -113,5 +125,23 @@ class InstallData implements InstallDataInterface
                 'used_in_forms' => ['adminhtml_customer', 'customer_account_create', 'customer_account_edit'],
             ]);
         $attribute->save();
+        
+        $this->moduleDataSetup->endSetup();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getDependencies()
+    {
+        return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAliases()
+    {
+        return [];
     }
 }
