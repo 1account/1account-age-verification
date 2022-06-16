@@ -1,17 +1,23 @@
 <?php
 
-namespace OneAccount\OneAccountAgeVerification\Setup;
+namespace OneAccount\OneAccountAgeVerification\Setup\Patch\Data;
 
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
+use Magento\Framework\Setup\Patch\DataPatchInterface;
 use Magento\Framework\Setup\UpgradeDataInterface;
 use Magento\Quote\Setup\QuoteSetupFactory;
 use Magento\Sales\Setup\SalesSetupFactory;
 use Magento\Quote\Setup\QuoteSetup;
 use Magento\Sales\Setup\SalesSetup;
 
-class UpgradeData implements UpgradeDataInterface
+class UpdateCustomerEntity implements DataPatchInterface
 {
+    /**
+     * @var ModuleDataSetupInterface
+     */
+    private $moduleDataSetup;
+
     /**
      * @var QuoteSetupFactory
      */
@@ -25,11 +31,14 @@ class UpgradeData implements UpgradeDataInterface
     /**
      * @param QuoteSetupFactory $quoteSetupFactory
      * @param SalesSetupFactory $salesSetupFactory
+     * @param ModuleDataSetupInterface $moduleDataSetup
      */
     public function __construct(
+        ModuleDataSetupInterface $moduleDataSetup,
         QuoteSetupFactory $quoteSetupFactory,
         SalesSetupFactory $salesSetupFactory
     ) {
+        $this->moduleDataSetup = $moduleDataSetup;
         $this->quoteSetupFactory = $quoteSetupFactory;
         $this->salesSetupFactory = $salesSetupFactory;
     }
@@ -41,15 +50,16 @@ class UpgradeData implements UpgradeDataInterface
      * @param ModuleContextInterface $context
      * @return void
      */
-    public function upgrade(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
+    public function apply()
     {
+        $this->moduleDataSetup->startSetup();
+        $setup = $this->moduleDataSetup;
+
         /** @var QuoteSetup $quoteInstaller */
         $quoteInstaller = $this->quoteSetupFactory->create(['resourceName' => 'quote_setup', 'setup' => $setup]);
 
         /** @var SalesSetup $salesInstaller */
         $salesInstaller = $this->salesSetupFactory->create(['resourceName' => 'sales_setup', 'setup' => $setup]);
-
-        $setup->startSetup();
 
             $salesInstaller->addAttribute('order', 'order_av', [
                 'type' => 'varchar',
@@ -69,6 +79,22 @@ class UpgradeData implements UpgradeDataInterface
                 'is_searchable_in_grid' => 1,
             ]);
 
-        $setup->endSetup();
+        $this->moduleDataSetup->endSetup();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getDependencies()
+    {
+        return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAliases()
+    {
+        return [];
     }
 }
