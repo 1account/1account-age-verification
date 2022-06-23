@@ -48,7 +48,7 @@ define(
                         alert('Thank you. You have successfully verified your age.');
                         if (client_logged_in === true) {
                             $.ajax({
-                                url: "order/statusupdate",
+                                url: "/status/order/statusupdate",
                                 data: {
                                     'id': window.checkoutConfig.customerData.id,
                                     'status': 'success'
@@ -64,7 +64,7 @@ define(
                         alert('We are sorry we have been unable to verify your age based on the details you have submitted.');
                         if (client_logged_in === true) {
                             $.ajax({
-                                url: "order/statusupdate",
+                                url: "/status/order/statusupdate",
                                 data: {
                                     'id': window.checkoutConfig.customerData.id,
                                     'status': 'failed'
@@ -110,14 +110,12 @@ define(
                     if (client_logged_in === true) {
                         if (clientSessionAvChecked === false && client_av_status !== 'success') {
                             showModal();
-                            return false;
                         } else {
                             return true;
                         }
                     } else {
                         if (clientSessionAvChecked === false && getIsValidState() === null) {
                             showModal();
-                            return false;
                         } else if (getIsValidState() === 'false') {
                             $.cookie("isValid", null);
                             return true;

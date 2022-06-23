@@ -31,7 +31,7 @@ $failUrl = $block->getBaseUrl() . 'status/validate/result?status=invalid';
                     if (moduleEnable === true) {
                         if (client_logged_in === true) {
                             $.ajax({
-                                url: "order/statusupdate",
+                                url: "/status/order/statusupdate",
                                 data: {
                                     'id': customerId,
                                     'status': 'success'
@@ -44,7 +44,7 @@ $failUrl = $block->getBaseUrl() . 'status/validate/result?status=invalid';
                         }
 
                         $.ajax({
-                            url: "order/validationupdate",
+                            url: "/status/order/validationupdate",
                             data: {
                                 'id': <?php echo $info['orderId'] ?>,
                                 'status': 'valid'
@@ -54,7 +54,7 @@ $failUrl = $block->getBaseUrl() . 'status/validate/result?status=invalid';
                         });
 
                         $.ajax({
-                            url: 'validate/notificationvalidation',
+                            url: 'status/validate/notificationvalidation',
                             data: {
                                 'id': <?php echo $info['orderId'] ?>
                             },
@@ -84,7 +84,5 @@ $failUrl = $block->getBaseUrl() . 'status/validate/result?status=invalid';
             building: '<?php echo $info['building'] ?>',
             postCode: '<?php echo $info['postCode'] ?>'
         });
-
-        e.preventDefault();
     });
 </script>
