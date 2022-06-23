@@ -54,7 +54,7 @@ $failUrl = $block->getBaseUrl() . 'status/validate/result?status=invalid';
                         });
 
                         $.ajax({
-                            url: 'status/validate/notificationvalidation',
+                            url: '/status/validate/notificationvalidation',
                             data: {
                                 'id': <?php echo $info['orderId'] ?>
                             },
