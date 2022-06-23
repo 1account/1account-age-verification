@@ -2,21 +2,17 @@
 
 namespace OneAccount\OneAccountAgeVerification\Setup\Patch\Data;
 
-use Magento\Eav\Setup\EavSetupFactory;
+use Magento\Catalog\Setup\CategorySetupFactory;
 use Magento\Customer\Model\Customer;
 use Magento\Customer\Setup\CustomerSetupFactory;
 use Magento\Eav\Model\Entity\Attribute\SetFactory as AttributeSetFactory;
-use Magento\Framework\Setup\InstallDataInterface;
-use Magento\Framework\Setup\ModuleContextInterface;
+use Magento\Eav\Setup\EavSetupFactory;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\Patch\DataPatchInterface;
-use Magento\Catalog\Setup\CategorySetupFactory;
 use Magento\Quote\Setup\QuoteSetupFactory;
 use Magento\Sales\Setup\SalesSetupFactory;
+use OneAccount\OneAccountAgeVerification\Model\Attribute\Source\AvStatus;
 
-/**
- * @package Vendor\Module\Setup\Patch\Data
- */
 class SetupCustomerEntity implements DataPatchInterface
 {
     /**
@@ -40,41 +36,33 @@ class SetupCustomerEntity implements DataPatchInterface
     private $eavSetupFactory;
 
     /**
-     * Category setup factory
-     *
      * @var CategorySetupFactory
      */
     protected $categorySetupFactory;
 
     /**
-     * Quote setup factory
-     *
      * @var QuoteSetupFactory
      */
     protected $quoteSetupFactory;
 
     /**
-     * Sales setup factory
-     *
      * @var SalesSetupFactory
      */
     protected $salesSetupFactory;
 
     /**
-     * Init
-     *
+     * @param ModuleDataSetupInterface $moduleDataSetup
      * @param EavSetupFactory $eavSetupFactory
      * @param CustomerSetupFactory $customerSetupFactory
      * @param AttributeSetFactory $attributeSetFactory
      * @param SalesSetupFactory $salesSetupFactory
-     * @param ModuleDataSetupInterface $moduleDataSetup
      */
     public function __construct(
         ModuleDataSetupInterface $moduleDataSetup,
-        EavSetupFactory $eavSetupFactory,
-        CustomerSetupFactory $customerSetupFactory,
-        AttributeSetFactory $attributeSetFactory,
-        SalesSetupFactory $salesSetupFactory
+        EavSetupFactory          $eavSetupFactory,
+        CustomerSetupFactory     $customerSetupFactory,
+        AttributeSetFactory      $attributeSetFactory,
+        SalesSetupFactory        $salesSetupFactory
     ) {
         $this->moduleDataSetup = $moduleDataSetup;
         $this->eavSetupFactory = $eavSetupFactory;
@@ -84,10 +72,7 @@ class SetupCustomerEntity implements DataPatchInterface
     }
 
     /**
-     * {@inheritdoc}
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @inheritDoc
      */
     public function apply()
     {
@@ -107,7 +92,7 @@ class SetupCustomerEntity implements DataPatchInterface
             'input' => 'select',
             'required' => false,
             'visible' => true,
-            'source' => 'OneAccount\OneAccountAgeVerification\Model\Attribute\Source\AvStatus',
+            'source' => AvStatus::class,
             'user_defined' => true,
             'sort_order' => 275,
             'position' => 400,
@@ -125,12 +110,12 @@ class SetupCustomerEntity implements DataPatchInterface
                 'used_in_forms' => ['adminhtml_customer', 'customer_account_create', 'customer_account_edit'],
             ]);
         $attribute->save();
-        
+
         $this->moduleDataSetup->endSetup();
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public static function getDependencies()
     {
@@ -138,7 +123,7 @@ class SetupCustomerEntity implements DataPatchInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function getAliases()
     {

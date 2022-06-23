@@ -2,16 +2,16 @@
 
 namespace OneAccount\OneAccountAgeVerification\Observer;
 
-use Magento\Sales\Model\Order;
-use Magento\Framework\Event\ObserverInterface;
-use Magento\Framework\Event\Observer as EventObserver;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Event\Observer as EventObserver;
+use Magento\Framework\Event\ObserverInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
+use Magento\Sales\Model\Order;
 use Magento\Store\Model\StoreManagerInterface;
 
 class OrderPlaceAfter implements ObserverInterface
 {
-    const ONEACCOUNT_ORDER_DATA_STORE_URL = 'https://api.1account.net/platforms/woomagento/incompleteAV/create';
+    public const ONEACCOUNT_ORDER_DATA_STORE_URL = 'https://api.1account.net/platforms/woomagento/incompleteAV/create';
 
     /**
      * @var ScopeConfigInterface
@@ -29,15 +29,14 @@ class OrderPlaceAfter implements ObserverInterface
     private $storeManager;
 
     /**
-     * OrderPlaceBefore constructor.
      * @param ScopeConfigInterface $scopeConfig
      * @param OrderRepositoryInterface $orderRepositoryInterface
      * @param StoreManagerInterface $storeManager
      */
     public function __construct(
-        ScopeConfigInterface $scopeConfig,
+        ScopeConfigInterface     $scopeConfig,
         OrderRepositoryInterface $orderRepositoryInterface,
-        StoreManagerInterface $storeManager
+        StoreManagerInterface    $storeManager
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->orderRepositoryInterface = $orderRepositoryInterface;
@@ -45,6 +44,8 @@ class OrderPlaceAfter implements ObserverInterface
     }
 
     /**
+     * Observer execute
+     *
      * @param EventObserver $observer
      */
     public function execute(EventObserver $observer)
@@ -58,7 +59,7 @@ class OrderPlaceAfter implements ObserverInterface
                 foreach ($order->getItems() as $item) {
                     $items[] = [
                         'itemName' => $item->getName(),
-                        'itemDescription' => $item->getDescription()
+                        'itemDescription' => $item->getDescription(),
                     ];
                 }
                 $orderData = [
@@ -67,17 +68,18 @@ class OrderPlaceAfter implements ObserverInterface
                     'userEmail' => $order->getCustomerEmail(),
                     'userPhone' => $order->getShippingAddress() ? $order->getShippingAddress()->getTelephone() : '',
                     'items' => $items,
-                    'avUrl' => $order->getStore()->getBaseUrl() . 'status/validate?key=' . base64_encode($order->getId()),
+                    'avUrl' =>
+                        $order->getStore()->getBaseUrl() . 'status/validate?key=' . base64_encode($order->getId()),
                     'storeUrl' => $order->getStore()->getBaseUrl(),
-                    'customerName' => $order->getCustomerFirstname() . ' ' . $order->getCustomerLastname()
+                    'customerName' => $order->getCustomerFirstname() . ' ' . $order->getCustomerLastname(),
                 ];
 
                 curl_setopt($validateData, CURLOPT_CUSTOMREQUEST, "POST");
                 curl_setopt($validateData, CURLOPT_RETURNTRANSFER, true);
                 curl_setopt($validateData, CURLOPT_POSTFIELDS, json_encode($orderData));
-                curl_setopt($validateData, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
+                curl_setopt($validateData, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
 
-                $response = json_decode(curl_exec($validateData), true);
+                curl_exec($validateData);
             }
         }
     }

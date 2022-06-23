@@ -1,30 +1,32 @@
 <?php
+
+use OneAccount\OneAccountAgeVerification\Block\StatusValidate;
+
 /**
- * @var $block \OneAccount\OneAccountAgeVerification\Block\StatusValidate
+ * @var $block StatusValidate
  */
-    $info = $block->getOrderData();
-    $successUrl = $block->getBaseUrl() . 'status/validate/result?status=valid';
-    $failUrl = $block->getBaseUrl() . 'status/validate/result?status=invalid';
+$info = $block->getOrderData();
+$successUrl = $block->getBaseUrl() . 'status/validate/result?status=valid';
+$failUrl = $block->getBaseUrl() . 'status/validate/result?status=invalid';
 ?>
 <script>
     require([
         "jquery",
         "mage/mage"
-    ], function($){
+    ], function ($) {
         var authCode = '<?php echo $block->getAuthCode() ?>';
         var avLevel = '<?php echo $block->getAvLevel() ?>';
         var clientId = '<?php echo $block->getClientId() ?>';
         var moduleEnable = Boolean(<?php echo $block->getModuleEnable() ?>);
         var client_logged_in = Boolean(<?php echo $block->checkCustomerExist() ?>);
-        var customerId = '<?php echo $block->getCustometId() ?>';
-
+        var customerId = '<?php echo $block->getCustomerId() ?>';
 
 
         PUSH_API.init({
             authCode: authCode,
             avLevel: avLevel,
             clientId: clientId,
-            onComplete: (response) => {
+            onComplete: function (response) {
                 if (response.status === "AV_SUCCESS") {
                     if (moduleEnable === true) {
                         if (client_logged_in === true) {
@@ -35,7 +37,7 @@
                                     'status': 'success'
                                 },
                                 type: "GET",
-                                dataType: 'json',
+                                dataType: 'json'
                             });
                         } else {
                             $.cookie("isValid", 'true');
@@ -48,7 +50,7 @@
                                 'status': 'valid'
                             },
                             type: "GET",
-                            dataType: 'json',
+                            dataType: 'json'
                         });
 
                         $.ajax({
@@ -57,7 +59,7 @@
                                 'id': <?php echo $info['orderId'] ?>
                             },
                             type: "POST",
-                            dataType: 'json',
+                            dataType: 'json'
                         });
 
                         $($.mage.redirect("<?php echo $successUrl ?>", "assign", 10));
@@ -70,7 +72,7 @@
     });
 </script>
 <script>
-    window.addEventListener("load", function() {
+    window.addEventListener("load", function () {
         PUSH_API.validate({
             msisdn: '<?php echo $info['msisdn'] ?>',
             email: '<?php echo $info['email'] ?>',

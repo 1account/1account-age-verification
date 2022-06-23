@@ -8,6 +8,7 @@ class AvStatus extends AbstractSource
 {
     /**
      * Get all options
+     *
      * @return array
      */
     public function getAllOptions()
@@ -16,7 +17,7 @@ class AvStatus extends AbstractSource
             $this->_options = [
                 ['label' => __('Select Status'), 'value' => ''],
                 ['label' => __('AV Success'), 'value' => 'success'],
-                ['label' => __('AV Failed'), 'value' => 'failed']
+                ['label' => __('AV Failed'), 'value' => 'failed'],
             ];
         }
 

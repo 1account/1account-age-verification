@@ -8,6 +8,7 @@ class AvValidation extends AbstractSource
 {
     /**
      * Get all options
+     *
      * @return array
      */
     public function getAllOptions()
@@ -16,7 +17,7 @@ class AvValidation extends AbstractSource
             $this->_options = [
                 ['label' => __('User Age Is Not Validated'), 'value' => 'not_validate'],
                 ['label' => __('User Age Is Valid'), 'value' => 'valid'],
-                ['label' => __('User Age Is Not Valid'), 'value' => 'invalid']
+                ['label' => __('User Age Is Not Valid'), 'value' => 'invalid'],
             ];
         }
 

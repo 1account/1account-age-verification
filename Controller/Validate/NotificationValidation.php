@@ -3,30 +3,31 @@
 namespace OneAccount\OneAccountAgeVerification\Controller\Validate;
 
 use Magento\Framework\App\Action\Action;
-use Magento\Customer\Api\CustomerRepositoryInterface;
-use Magento\Framework\App\Action\Context;
-use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\App\ResponseInterface;
+use Magento\Framework\Controller\ResultInterface;
 
 class NotificationValidation extends Action
 {
-    const ONEACCOUNT_ORDER_DATA_UPDATE_URL = 'https://api.1account.net/platforms/woomagento/incompleteAV/update';
+    public const ONEACCOUNT_ORDER_DATA_UPDATE_URL = 'https://api.1account.net/platforms/woomagento/incompleteAV/update';
 
+    /**
+     * Notification validate action
+     *
+     * @return ResponseInterface|ResultInterface|void
+     */
     public function execute()
     {
         $validateData = curl_init(self::ONEACCOUNT_ORDER_DATA_UPDATE_URL);
-
         $orderData = [
             'orderId' => $this->getRequest()->getParam('id'),
             'status' => 'AVSUCCESS',
-            'platformId' => 'MAGENTO'
+            'platformId' => 'MAGENTO',
         ];
 
         curl_setopt($validateData, CURLOPT_CUSTOMREQUEST, "PUT");
         curl_setopt($validateData, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($validateData, CURLOPT_POSTFIELDS, json_encode($orderData));
-        curl_setopt($validateData, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
-
-        $response = json_decode(curl_exec($validateData), true);
+        curl_setopt($validateData, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
+        curl_exec($validateData);
     }
 }
