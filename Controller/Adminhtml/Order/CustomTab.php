@@ -2,21 +2,22 @@
 
 namespace OneAccount\OneAccountAgeVerification\Controller\Adminhtml\Order;
 
-use Magento\Sales\Api\Data\OrderInterfaceFactory;
-use Magento\Framework\Controller\Result\RedirectFactory;
 use Magento\Backend\App\Action\Context;
+use Magento\Framework\App\Response\Http\FileFactory;
+use Magento\Framework\App\ResponseInterface;
+use Magento\Framework\Controller\Result\JsonFactory;
+use Magento\Framework\Controller\Result\RawFactory;
+use Magento\Framework\Controller\Result\RedirectFactory;
+use Magento\Framework\Controller\ResultInterface;
+use Magento\Framework\Registry;
+use Magento\Framework\Translate\InlineInterface;
+use Magento\Framework\View\Result\LayoutFactory;
+use Magento\Framework\View\Result\PageFactory;
+use Magento\Sales\Api\Data\OrderInterfaceFactory;
 use Magento\Sales\Api\OrderManagementInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
-use Psr\Log\LoggerInterface;
-use Magento\Framework\Registry;
-use Magento\Framework\App\Response\Http\FileFactory;
-use Magento\Framework\Translate\InlineInterface;
-use Magento\Framework\View\Result\PageFactory;
-use Magento\Framework\Controller\Result\JsonFactory;
-use Magento\Framework\View\Result\LayoutFactory;
-use Magento\Framework\Controller\Result\RawFactory;
-use Magento\Framework\Controller\ResultInterface;
 use Magento\Sales\Controller\Adminhtml\Order;
+use Psr\Log\LoggerInterface;
 
 class CustomTab extends Order
 {
@@ -46,19 +47,19 @@ class CustomTab extends Order
      * @param RedirectFactory $redirectFactory
      */
     public function __construct(
-        Context $context,
-        Registry $coreRegistry,
-        FileFactory $fileFactory,
-        InlineInterface $translateInline,
-        PageFactory $resultPageFactory,
-        JsonFactory $resultJsonFactory,
-        LayoutFactory $resultLayoutFactory,
-        RawFactory $resultRawFactory,
+        Context                  $context,
+        Registry                 $coreRegistry,
+        FileFactory              $fileFactory,
+        InlineInterface          $translateInline,
+        PageFactory              $resultPageFactory,
+        JsonFactory              $resultJsonFactory,
+        LayoutFactory            $resultLayoutFactory,
+        RawFactory               $resultRawFactory,
         OrderManagementInterface $orderManagement,
         OrderRepositoryInterface $orderRepository,
-        LoggerInterface $logger,
-        OrderInterfaceFactory $orderInterfaceFactory,
-        RedirectFactory $redirectFactory
+        LoggerInterface          $logger,
+        OrderInterfaceFactory    $orderInterfaceFactory,
+        RedirectFactory          $redirectFactory
     ) {
         $this->orderInterfaceFactory = $orderInterfaceFactory;
         $this->redirectFactory = $redirectFactory;
@@ -80,16 +81,12 @@ class CustomTab extends Order
     /**
      * Add order av status action
      *
-     * @return ResultInterface
+     * @return ResponseInterface|ResultInterface|void
      */
     public function execute()
     {
         $order = $this->orderInterfaceFactory->create()->load($this->getRequest()->getParam('order_id'));
         $order->setData('order_av', $this->getRequest()->getParam('av_status'));
-        $order->save();
-//        $message = __("1Account order status updated");
-//        $this->messageManager->addSuccessMessage($message);
-
-        return $order;
+        $this->orderRepository->save($order);
     }
 }

@@ -38,39 +38,23 @@ define(
             return $.cookie("isValid", valid);
         }
 
-        // const oneAccountValidate = () => {
-        //     if ( client_logged_in === true ) {
-        //         if (clientSessionAvChecked === false && client_av_status !== 'success') {
-        //             showModal();
-        //         } else {
-        //             $(".payment-method-content button").trigger("click")
-        //         }
-        //     } else {
-        //         if (getIsValidState() === null) {
-        //             showModal();
-        //         } else {
-        //             $(".payment-method-content button").trigger("click")
-        //         }
-        //     }
-        // }
-
-        if ((client_logged_in === true && (client_av_status !== 'success')) || client_logged_in === false ) {
+        if ((client_logged_in === true && (client_av_status !== 'success')) || client_logged_in === false) {
             PUSH_API.init({
                 authCode: authCode,
                 avLevel: avLevel,
                 clientId: clientId,
-                onComplete: (response) => {
+                onComplete: function (response) {
                     if (response.status === "AV_SUCCESS") {
                         alert('Thank you. You have successfully verified your age.');
-                        if ( client_logged_in === true ) {
+                        if (client_logged_in === true) {
                             $.ajax({
-                                url: "order/statusupdate",
+                                url: "/status/order/statusupdate",
                                 data: {
                                     'id': window.checkoutConfig.customerData.id,
                                     'status': 'success'
                                 },
                                 type: "GET",
-                                dataType: 'json',
+                                dataType: 'json'
                             });
                             client_av_status = 'success';
                         } else {
@@ -78,15 +62,15 @@ define(
                         }
                     } else if (response.status === "AV_FAILED") {
                         alert('We are sorry we have been unable to verify your age based on the details you have submitted.');
-                        if ( client_logged_in === true ) {
+                        if (client_logged_in === true) {
                             $.ajax({
-                                url: "order/statusupdate",
+                                url: "/status/order/statusupdate",
                                 data: {
                                     'id': window.checkoutConfig.customerData.id,
                                     'status': 'failed'
                                 },
                                 type: "GET",
-                                dataType: 'json',
+                                dataType: 'json'
                             });
                             client_av_status = 'failed';
                         } else {
@@ -96,7 +80,7 @@ define(
                     clientSessionAvChecked = true;
                     $(".payment-method-content button").trigger("click")
                 },
-                onClose: () => {
+                onClose: function () {
                     clientSessionAvChecked = true;
                     $(".payment-method-content button").trigger("click")
                 }
@@ -118,8 +102,6 @@ define(
                 building: shippingAddress.street[1],
                 postCode: shippingAddress.postcode
             });
-
-            e.preventDefault();
         }
 
         return {

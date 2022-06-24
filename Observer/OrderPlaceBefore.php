@@ -2,15 +2,15 @@
 
 namespace OneAccount\OneAccountAgeVerification\Observer;
 
-use Magento\Sales\Model\Order;
-use Magento\Framework\Event\ObserverInterface;
-use Magento\Framework\Event\Observer as EventObserver;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Sales\Api\OrderRepositoryInterface;
+use Magento\Framework\Event\Observer as EventObserver;
+use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Stdlib\CookieManagerInterface;
+use Magento\Sales\Api\OrderRepositoryInterface;
+use Magento\Sales\Model\Order;
 
 class OrderPlaceBefore implements ObserverInterface
 {
@@ -35,7 +35,6 @@ class OrderPlaceBefore implements ObserverInterface
     private $cookieManager;
 
     /**
-     * OrderPlaceBefore constructor.
      * @param CustomerRepositoryInterface $customerRepositoryInterface
      * @param ScopeConfigInterface $scopeConfig
      * @param OrderRepositoryInterface $orderRepositoryInterface
@@ -43,9 +42,9 @@ class OrderPlaceBefore implements ObserverInterface
      */
     public function __construct(
         CustomerRepositoryInterface $customerRepositoryInterface,
-        ScopeConfigInterface $scopeConfig,
-        OrderRepositoryInterface $orderRepositoryInterface,
-        CookieManagerInterface $cookieManager
+        ScopeConfigInterface        $scopeConfig,
+        OrderRepositoryInterface    $orderRepositoryInterface,
+        CookieManagerInterface      $cookieManager
     ) {
         $this->customerRepositoryInterface = $customerRepositoryInterface;
         $this->scopeConfig = $scopeConfig;
@@ -54,6 +53,8 @@ class OrderPlaceBefore implements ObserverInterface
     }
 
     /**
+     * Observer execute
+     *
      * @param EventObserver $observer
      * @throws LocalizedException
      * @throws NoSuchEntityException

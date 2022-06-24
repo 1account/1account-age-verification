@@ -1,9 +1,11 @@
 <?php
+
 namespace OneAccount\OneAccountAgeVerification\Block;
 
 use Magento\Framework\App\Request\Http;
-use Magento\Framework\View\Element\Template\Context;
+use Magento\Framework\Phrase;
 use Magento\Framework\View\Element\Template;
+use Magento\Framework\View\Element\Template\Context;
 
 class StatusPage extends Template
 {
@@ -13,26 +15,30 @@ class StatusPage extends Template
     protected $request;
 
     /**
-     * StatusPage constructor.
      * @param Context $context
      * @param Http $request
      */
     public function __construct(
         Context $context,
-        Http $request
+        Http    $request
     ) {
         $this->request = $request;
         parent::__construct($context);
     }
 
+    /**
+     * Get status message
+     *
+     * @return Phrase
+     */
     public function getMessage()
     {
         $status = $this->request->getParam('status');
 
         if ($status === 'valid') {
-            return 'Thank you. You have successfully verified your age.';
+            return __('Thank you. You have successfully verified your age.');
         }
 
-        return 'We are sorry we have been unable to verify your age based on the details you have submitted.';
+        return __('We are sorry we have been unable to verify your age based on the details you have submitted.');
     }
 }

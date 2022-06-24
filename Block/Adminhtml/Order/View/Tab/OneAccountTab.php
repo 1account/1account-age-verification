@@ -3,16 +3,20 @@
 namespace OneAccount\OneAccountAgeVerification\Block\Adminhtml\Order\View\Tab;
 
 use Magento\Backend\Block\Template;
-use Magento\Backend\Block\Widget\Tab\TabInterface;
-use Magento\Framework\Registry;
 use Magento\Backend\Block\Template\Context;
-use Magento\Sales\Model\Order;
-use OneAccount\OneAccountAgeVerification\Model\Attribute\Source\AvValidation;
+use Magento\Backend\Block\Widget\Button;
+use Magento\Backend\Block\Widget\Tab\TabInterface;
 use Magento\Framework\Event\Manager;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Registry;
+use Magento\Sales\Model\Order;
+use OneAccount\OneAccountAgeVerification\Model\Attribute\Source\AvValidation;
 
 class OneAccountTab extends Template implements TabInterface
 {
+    /**
+     * @var string
+     */
     protected $_template = 'order/view/tab/oneaccounttab.phtml';
 
     /**
@@ -31,7 +35,6 @@ class OneAccountTab extends Template implements TabInterface
     private $eventManager;
 
     /**
-     * View constructor.
      * @param Context $context
      * @param Registry $registry
      * @param AvValidation $avValidationStatuses
@@ -39,11 +42,11 @@ class OneAccountTab extends Template implements TabInterface
      * @param array $data
      */
     public function __construct(
-        Context $context,
-        Registry $registry,
+        Context      $context,
+        Registry     $registry,
         AvValidation $avValidationStatuses,
-        Manager $eventManager,
-        array $data = []
+        Manager      $eventManager,
+        array        $data = []
     ) {
         $this->coreRegistry = $registry;
         $this->avValidationStatuses = $avValidationStatuses;
@@ -61,7 +64,7 @@ class OneAccountTab extends Template implements TabInterface
     {
         $onclick = "submitAndReloadArea($('order_av_block').parentNode, '" . $this->getSubmitUrl() . "')";
         $button = $this->getLayout()->createBlock(
-            \Magento\Backend\Block\Widget\Button::class
+            Button::class
         )->setData(
             ['label' => __('Submit Av Status'), 'class' => 'action-save action-secondary', 'onclick' => $onclick]
         );
@@ -90,6 +93,8 @@ class OneAccountTab extends Template implements TabInterface
     }
 
     /**
+     * Get av statuses
+     *
      * @return array
      */
     public function getAvStatuses()
@@ -105,10 +110,9 @@ class OneAccountTab extends Template implements TabInterface
     }
 
     /**
-     * Retrieve order model instance
+     * Get order id
      *
-     * @return int
-     *Get current id order
+     * @return mixed
      */
     public function getOrderId()
     {
@@ -126,7 +130,7 @@ class OneAccountTab extends Template implements TabInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function getTabLabel()
     {
@@ -134,7 +138,7 @@ class OneAccountTab extends Template implements TabInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function getTabTitle()
     {
@@ -142,7 +146,7 @@ class OneAccountTab extends Template implements TabInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function canShowTab()
     {
@@ -150,7 +154,7 @@ class OneAccountTab extends Template implements TabInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function isHidden()
     {

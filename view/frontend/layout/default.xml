@@ -3,8 +3,7 @@
       xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceContainer name="after.body.start">
-            <block class="OneAccount\OneAccountAgeVerification\Block\Validator\CustomCheckoutValidator"
-                   template="OneAccount_OneAccountAgeVerification::checkout/index.phtml"
+            <block template="OneAccount_OneAccountAgeVerification::checkout/index.phtml"
                    name="modalOverlay"
                    as="modalOverlay"/>
         </referenceContainer>
