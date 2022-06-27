@@ -110,12 +110,14 @@ define(
                     if (client_logged_in === true) {
                         if (clientSessionAvChecked === false && client_av_status !== 'success') {
                             showModal();
+                            return false;
                         } else {
                             return true;
                         }
                     } else {
                         if (clientSessionAvChecked === false && getIsValidState() === null) {
                             showModal();
+                            return false;
                         } else if (getIsValidState() === 'false') {
                             $.cookie("isValid", null);
                             return true;
